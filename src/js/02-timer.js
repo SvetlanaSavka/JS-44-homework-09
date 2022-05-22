@@ -71,9 +71,7 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    const currentTime = options.defaultDate.getTime();
-    const selectedTime = selectedDates[0].getTime();
-    if (selectedTime > currentTime) {
+    if (result.selectedDates[0].getTime() - new Date() > 0) {
       startBtn.disable = false;
     } else {
       window.alert('Please choose a date in the future');
@@ -81,32 +79,36 @@ const options = {
   },
 };
 
+const result = flatpickr('input#datetime-picker', options);
+
 const startBtn = document.querySelector('button[data-start]');
+startBtn.addEventListener('click', onStartBtnClick);
+
+let timeoutId = null;
+
+function onStartBtnClick() {
+  timeoutId = setInterval(() => {
+    if (result.selectedDates[0].getTime() - new Date() < 0) {
+      clearInterval(timeoutId);
+      return;
+    }
+    const newDate = new Date();
+    const selectedDate = result.selectedDates[0].getTime();
+    const deltaTime = newDate.getTime() - selectedDate;
+  }, 1000);
+}
+
+const time = convertMs(result.selectedDates[0].getTime() - new Date());
+updateClockface(time);
+//console.log(`${days}:${hours}:${minutes}:${seconds}`);
+//console.log(result.selectedDates[0].getTime() - new Date());
+
 const days = document.querySelector('[data-days]');
 const hours = document.querySelector('[data-hours]');
 const minutes = document.querySelector('[data-minutes]');
 const seconds = document.querySelector('[data-seconds]');
 
-//const clockface = document.querySelector('[datetime-picker]');
-
-startBtn.addEventListener('click', setInterval(onStartBtnClick, 1000));
-
-function onStartBtnClick() {
-  const result = flatpickr('input#datetime-picker', options);
-  const selectedDate = result.selectedDates[0].getTime();
-  const newDate = new Date();
-  const deltaTime = newDate.getTime() - selectedDate;
-  const time = convertMs(deltaTime);
-  updateClockface(time);
-
-  /* const days = addLeadingZero(days);
-  const hours = addLeadingZero(hours);
-  const minutes = addLeadingZero(minutes);
-  const seconds = addLeadingZero(seconds);
- */
-  console.log(`${days}:${hours}:${minutes}:${seconds}`);
-  console.log(deltaTime);
-}
+//startBtn.addEventListener('click', onStartBtnClick);
 
 function updateClockface(data) {
   days.textContent = addLeadingZero(data.days);
@@ -114,11 +116,6 @@ function updateClockface(data) {
   minutes.textContent = addLeadingZero(data.minutes);
   seconds.textContent = addLeadingZero(data.seconds);
 }
-
-/* function updateClockface({ days, hours, minutes, seconds }) - лучше сделать function updateClockface(data)
-
-А потом minutes.textContent = addLeadingZero(data.minutes);
- */
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
@@ -142,72 +139,5 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-/* const timer = {
-  start() {
-    const startTime = Date.now(); // хотим сохранить текущее время, время старта
-    setInterval(() => {
-      const currentTime = Date.now();
-      //console.log('start -> currentTime', currentTime);
-      const deltaTime = currentTime - startTime;
-      const { days, hours, minutes, seconds } = convertMs(deltaTime);
-      console.log(`${days}:${hours}:${minutes}:${seconds}`);
-    }, 1000);
-  },
-};
-
-timer.start(); */
-
-/* ЯЯЯЯЯЯ
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-
-const input = document.querySelector('#datetime-picker')
-  ; const startBtn = document.querySelector('[data-start]');
-const days = document.querySelector('[data-days]');
-const hours = document.querySelector('[data-hours]');
-const minutes = document.querySelector('[data-minutes]');
-const seconds = document.querySelector('[data-seconds]');
-let selectedTime = null;
-let interval = null;
-const checkData = selected => {
-  if (selected > new Date()) { if (interval === null) { toggleBtn(false); } selectedTime = selected; return; } Notify.failure('Please choose a date in the future');
-};
-const options = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  onClose(selectedDates)
-  { checkData(selectedDates[0]); },
-};
-flatpickr(input, options);
-const toggleBtn = flag => { startBtn.disabled = flag; };
-
-const addLeadingZero = value => {
-  return value.toString().padStart(2, '0');
-};
-function convertMs(ms) {
-   // Number of milliseconds per unit of time  const second = 1000;  const minute = second * 60;  const hour = minute * 60;  const day = hour * 24;
-  // Remaining days  const days = addLeadingZero(Math.floor(ms / day));  // Remaining hours  const hours = addLeadingZero(Math.floor((ms % day) / hour));  // Remaining minutes  const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));  // Remaining seconds  const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
-  return { days, hours, minutes, seconds };}
-const timerStart = () => {
-  const time = new Date();
-  if (time >= selectedTime)
-  {
-    clearInterval(interval)
-    startBtn.disabled = false; return;
-  }
-  const res = convertMs(selectedTime - time);
-  days.innerHTML = res.days;
-  hours.innerHTML = res.hours;
-  minutes.innerHTML = res.minutes;
-  seconds.innerHTML = res.seconds;
-};
-const omClickStart = () => {
-  toggleBtn(true); timerStart();
-  interval = setInterval(timerStart, 1000);
-  Notify.success('Timer started');
-};
-startBtn.addEventListener('click', omClickStart); */
-// После этого я должна на кнопку старт добавить : Отсчет времени потом стоп
+console.log(`${days}:${hours}:${minutes}:${seconds}`);
+console.log(result.selectedDates[0].getTime() - new Date());
