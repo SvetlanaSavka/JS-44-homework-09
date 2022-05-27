@@ -95,13 +95,10 @@ function onStartBtnClick() {
     const newDate = new Date();
     const selectedDate = result.selectedDates[0].getTime();
     const deltaTime = newDate.getTime() - selectedDate;
+    const time = convertMs(result.selectedDates[0].getTime() - new Date());
+    updateClockface(time);
   }, 1000);
 }
-
-const time = convertMs(result.selectedDates[0].getTime() - new Date());
-updateClockface(time);
-//console.log(`${days}:${hours}:${minutes}:${seconds}`);
-//console.log(result.selectedDates[0].getTime() - new Date());
 
 const days = document.querySelector('[data-days]');
 const hours = document.querySelector('[data-hours]');
@@ -139,5 +136,5 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-console.log(`${days}:${hours}:${minutes}:${seconds}`);
-console.log(result.selectedDates[0].getTime() - new Date());
+//console.log(`${days}:${hours}:${minutes}:${seconds}`);
+//console.log(result.selectedDates[0].getTime() - new Date());

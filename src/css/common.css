@@ -16,3 +16,9 @@ img {
   display: block;
   max-width: 100%;
 }
+
+.value {
+  display: flex;
+  flex-direction: column;
+  font-size: xx-large;
+}

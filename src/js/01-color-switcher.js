@@ -8,10 +8,12 @@ refs = {
 refs.startBtn.addEventListener('click', startColorSwitchers);
 refs.stopBtn.addEventListener('click', stopColorSwitchers);
 
+refs.stopBtn.disabled = true;
+
 function startColorSwitchers() {
-  if (refs.stopBtn) {
-    refs.startBtn.disable = true;
-  }
+  refs.startBtn.disabled = true; //неактивна
+  refs.stopBtn.disabled = false; //активна
+
   timeoutId = setInterval(() => {
     document.body.style.backgroundColor = getRandomHexColor();
   }, 1000);
@@ -19,6 +21,9 @@ function startColorSwitchers() {
 
 function stopColorSwitchers() {
   clearInterval(timeoutId); // очистить интервал
+
+  refs.startBtn.disabled = false; //активна
+  refs.stopBtn.disabled = true; //неактивна
 }
 
 function getRandomHexColor() {
